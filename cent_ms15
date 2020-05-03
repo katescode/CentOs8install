@@ -1,0 +1,66 @@
+dnf install python2
+dnf install compat-openssl10
+alternatives --config python//to python2
+dnf info python-setuptools
+
+curl -o /etc/yum.repos.d/mssql-server.repo https://packages.microsoft.com/config/rhel/7/mssql-server-2019.repo
+yum makecache
+
+//seLinux
+sudo setenforce 0
+sudo sed -i 's/^SELINUX=.*/SELINUX=permissive/g' /etc/selinux/config
+
+//downlod and install
+rpm -Uvh --nodeps mssql-server*rpm
+curl -o /etc/yum.repos.d/msprod.repo https://packages.microsoft.com/config/rhel/7/prod.repo
+install mssql-tools unixODBC-devel
+//check
+rpm -qi mssql-server
+//setup
+/opt/mssql/bin/mssql-conf setup
+/opt/mssql/bin/sqlservr-setup
+
+//open port 1433
+firewall-cmd --zone=public --add-port=1433/tcp --permanent
+firewall-cmd --reload
+
+echo 'export PATH=$PATH:/opt/mssql/bin:/opt/mssql-tools/bin' | sudo tee /etc/profile.d/mssql.sh
+source /etc/profile.d/mssql.sh
+
+//check
+systemctl status mssql-server.service 
+
+//Cl0seW1n0penD00R
+sqlcmd -S localhost -U SA
+
+//create database
+CREATE DATABASE df307_14;
+
+//check
+SELECT name FROM SYS.DATABASES;
+
+//create user
+CREATE LOGIN tariq WITH PASSWORD = 'RED_HAT666';
+CREATE USER tariq FOR LOGIN tariq;  
+
+//check
+	//login
+	SELECT * FROM master.sys.sql_logins;
+	//user
+	SELECT *FROM master.sys.database_principals;
+
+//permission
+
+1> USE df307_14
+2> go
+1> CREATE USER tariq FOR LOGIN tariq
+2> go
+1> EXEC sp_addrolemember N'db_owner', N'tariq'
+2> go
+
+
+
+
+
+
+

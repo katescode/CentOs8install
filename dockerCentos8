@@ -1,0 +1,21 @@
+## add repo
+sudo yum install -y yum-utils
+sudo yum-config-manager     --add-repo     https://download.docker.com/linux/centos/docker-ce.repo
+
+## sloving for "package docker-ce-3:19.03.8-3.el7.x86_64 requires containerd.io >= 1.2.2-3, but none of the providers can be installed"
+sudo dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+
+## sloving "conflicts with file from package podman"
+sudo dnf remove podman
+
+## instal docker
+sudo yum install docker-ce docker-ce-cli containerd.io
+sudo systemctl disable firewalld
+
+##enable start and check
+systemctl enable --now docker
+systemctl status docker
+
+## check its work
+docker run hello-world
+
